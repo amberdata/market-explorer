@@ -25,9 +25,10 @@ Build for production with minification
 
 Configuration (environment variables):
 - API_KEY: this is your API key - you can obtain one at https://amberdata.io/pricing  
-- for example:
 
-    APIKEY=<your_api_key_here> npm run dev
+For example:
+
+    API_KEY=<your_api_key_here> npm run dev
 
 
 ## Features
