@@ -7,6 +7,10 @@
             <img src="./assets/logo_terminal_assets.svg" alt="">
           </div>
           <div class="layout-nav">
+            <div class="websocket-status">
+              <Badge v-if="wsActive" status="processing" text="Connected" />
+              <Badge v-else status="error" text="Disconnected" />
+            </div>
             <Button v-if="!isAuthed" icon="md-alert" :to="{ name: 'Settings' }" type="default" ghost>Authenticate</Button>
             <Button v-else icon="md-checkbox-outline" type="success">Authenticated</Button>
           </div>
@@ -78,9 +82,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['apiKey']),
+    ...mapGetters(['apiKey', 'wsActive', 'authenticated']),
     isAuthed() {
-      return this.apiKey !== null
+      return this.authenticated
     },
   },
 
@@ -146,6 +150,7 @@ export default {
 }
 
 .layout-nav {
+  display: flex;
   margin: 0 auto;
   margin-right: 20px;
 }
@@ -160,6 +165,11 @@ export default {
   height: 60px;
   line-height: 60px;
 }
+
+a.ivu-btn,
+button.ivu-btn {
+  margin: auto 20px;
+}
 </style>
 <style>
 .ivu-layout-sider .ivu-layout-sider-children {
@@ -172,5 +182,9 @@ export default {
 }
 .poweredby-wrap img {
   width: 100%;
+}
+
+.websocket-status .ivu-badge-status-text {
+  color: white;
 }
 </style>

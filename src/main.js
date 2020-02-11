@@ -9,6 +9,7 @@ import 'view-design/dist/styles/iview.css'
 import './theme/index.css'
 
 Vue.config.productionTip = false
+Vue.prototype.$w3d = null
 Vue.use(ViewUI, {})
 
 /* eslint-disable no-new */
