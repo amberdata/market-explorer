@@ -5,7 +5,7 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
-import { dateTimeToFormat } from '../common/timeHandler'
+import { dateTimeToFormat } from './timeHandler'
 
 am4core.useTheme(am4themes_animated);
 

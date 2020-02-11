@@ -26,7 +26,7 @@
 // -------------------------------------------------------------------------------------------------
 
 <script>
-  import * as charts from '../common/charts'
+  import * as charts from '../utils/charts'
 
   export default {
     // Properties

@@ -4,7 +4,7 @@
     <Row style="padding: 20px 0">
       <Col span="24">
         <Card shadow>
-          <p>stuff here</p>
+          <Summary :exchanges="exchanges" />
         </Card>
       </Col>
     </Row>
@@ -12,8 +12,27 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import Summary from '../components/Summary.vue'
+
 export default {
   name: 'Home',
+
+  components: {
+    Summary,
+  },
+
+  computed: {
+    ...mapGetters(['exchanges'])
+  },
+
+  methods: {
+    ...mapActions(['getExchanges'])
+  },
+
+  mounted() {
+    this.getExchanges()
+  }
 }
 </script>
 

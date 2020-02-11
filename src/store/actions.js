@@ -32,4 +32,11 @@ export default {
       }
     }
   },
+
+  async getExchanges({ commit }) {
+    if (!Vue.prototype.$w3d) return
+    const { exchanges } = await Vue.prototype.$w3d.market.getFeatures(['exchanges'])
+
+    commit('UPDATE', { key: 'exchanges', value: exchanges })
+  }
 }
