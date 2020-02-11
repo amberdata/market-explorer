@@ -1,0 +1,6 @@
+{
+  "server": {
+    "version": "v1",
+    "port": 1337
+  }
+}
