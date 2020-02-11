@@ -29,9 +29,9 @@ export default {
   },
 
   methods: {
-    ...mapActions(['update', 'setWeb3dataProvider']),
+    ...mapActions(['setApiKey', 'setWeb3dataProvider']),
     updateKey() {
-      this.update({ key: 'apiKey', value: this.key })
+      this.setApiKey(this.key)
       this.setWeb3dataProvider()
     },
   },

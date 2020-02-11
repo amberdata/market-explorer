@@ -5,6 +5,18 @@ export default {
   update({ commit }, { key, value }) {
     commit('UPDATE', { key, value })
   },
+  setApiKey({ commit }, apiKey) {
+    localStorage.setItem('apiKey', apiKey)
+    commit('UPDATE', { key: 'apiKey', value: apiKey })
+  },
+  loadApiKeyFromCache({ commit, dispatch, state }) {
+    if (state.apiKey) return
+    const apiKey = localStorage.getItem('apiKey')
+    if (apiKey) {
+      commit('UPDATE', { key: 'apiKey', value: apiKey })
+      dispatch('setWeb3dataProvider')
+    }
+  },
   socketUpdate({ commit }, data) {
     commit('SOCKET_UPDATE', data)
   },

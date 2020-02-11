@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'App',
@@ -88,7 +88,13 @@ export default {
     },
   },
 
+  methods: {
+    ...mapActions(['loadApiKeyFromCache'])
+  },
+
   mounted() {
+    this.loadApiKeyFromCache()
+
     // Set the current selected menu link based on current route
     const name = this.$route.name
     switch (name) {

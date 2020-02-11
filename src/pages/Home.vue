@@ -23,7 +23,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['exchanges'])
+    ...mapGetters(['exchanges', 'authenticated'])
   },
 
   methods: {
@@ -32,6 +32,10 @@ export default {
 
   mounted() {
     this.getExchanges()
+  },
+
+  watch: {
+    'authenticated': ['getExchanges']
   }
 }
 </script>
