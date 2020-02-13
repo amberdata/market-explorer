@@ -7,12 +7,11 @@
             <img src="./assets/logo_terminal_assets.svg" alt="">
           </div>
           <div class="layout-nav">
-            <div class="websocket-status">
+            <Button v-if="!isAuthed" icon="md-unlock" :to="{ name: 'Settings' }" type="error" ghost>Authenticate</Button>
+            <div v-else class="websocket-status">
               <Badge v-if="wsActive" status="processing" text="Connected" />
               <Badge v-else status="error" text="Disconnected" />
             </div>
-            <Button v-if="!isAuthed" icon="md-alert" :to="{ name: 'Settings' }" type="default" ghost>Authenticate</Button>
-            <Button v-else icon="md-checkbox-outline" type="success">Authenticated</Button>
           </div>
         </Menu>
       </Header>
@@ -22,6 +21,14 @@
             <MenuItem name="1-1" :to="{ name: 'Home' }">
               <Icon type="ios-compass" />
               <span>Home</span>
+            </MenuItem>
+            <MenuItem name="6-1" :to="{ name: 'OHLCV' }">
+              <Icon type="ios-stats" />
+              <span>OHLCV</span>
+            </MenuItem>
+            <MenuItem name="5-1" :to="{ name: 'Market Depth' }">
+              <Icon type="ios-analytics" />
+              <span>Market Depth</span>
             </MenuItem>
             <MenuItem name="2-1" :to="{ name: 'Assets' }">
               <Icon type="logo-bitcoin" />
@@ -33,19 +40,7 @@
             </MenuItem>
             <MenuItem name="4-1" :to="{ name: 'Blockchain' }">
               <Icon type="ios-albums" />
-              <span>Blockchain Data</span>
-            </MenuItem>
-            <MenuItem name="5-1" :to="{ name: 'Market Depth' }">
-              <Icon type="ios-analytics" />
-              <span>Market Depth</span>
-            </MenuItem>
-            <MenuItem name="6-1" :to="{ name: 'OHLCV' }">
-              <Icon type="ios-stats" />
-              <span>OHLCV</span>
-            </MenuItem>
-            <MenuItem name="7-1" :to="{ name: 'Summary' }">
-              <Icon type="ios-paper" />
-              <span>Summary</span>
+              <span>Blockchain</span>
             </MenuItem>
             <MenuItem name="10-1" :to="{ name: 'Settings' }">
               <Icon type="ios-construct" />

@@ -35,7 +35,8 @@ export function dateTimeToISODateTime({ date, offset, zone = 'UTC' }) {
 }
 
 export function dateTimeToFormat({ date, offset, format, zone = 'UTC' }) {
-  return _dateTime({ date, offset, zone }).toFormat(format)
+  // return _dateTime({ date, offset, zone }).toFormat(format)
+  return _dateTime({ date, offset, zone }).toMillis()
 }
 
 export function isoToDateTime(iso) {

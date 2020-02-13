@@ -1,5 +1,3 @@
-// -------------------------------------------------------------------------------------------------
-
 <template>
   <div id="blockchain_data_blocks">
     <div>
@@ -16,21 +14,16 @@
   </div>
 </template>
 
-// -------------------------------------------------------------------------------------------------
-
 <script>
-  import * as api from '../common/api'
-  import * as charts from '../common/charts'
-  import { dateTimeToISODateTime } from '../common/timeHandler'
-  import { addWatcherBlocks, deleteWatcher } from '../common/websocketsHelper'
+  // import * as api from '../common/api'
+  import * as charts from '../utils/charts'
+  import { dateTimeToISODateTime } from '../utils/timeHandler'
+  import { addWatcherBlocks, deleteWatcher } from '../utils/websocketsHelper'
 
   export default {
-    // Properties
-    name: 'blockchain_data.blocks',
+    name: 'BlockchainBlocks',
+    props: ['exchange', 'pair'],
 
-    // Reactive data
-    computed: {
-    },
     data () {
       return {
         // Chart data
@@ -38,7 +31,7 @@
         chartName: 'chartdiv',
 
         // Properties
-        propertySelected: 'gasUsed',
+        propertySelected: 'numTransactions',
         propertyNames: ['gasLimit', 'gasUsed', 'numTransactions', 'numUncles', 'size'],
 
         // Websockets
@@ -55,20 +48,18 @@
       refreshChart() {
         charts.refresh(this.chart);
       },
-      refreshData() {
+      pushDataItem(item) {
+        const vm = this
+        vm.chart.addData(vm.createDataPoint(item, true), 1)
+      },
+      async refreshData() {
         this.chart.data = null;
 
         const vm = this;
-        api
-          .getLastBlocks(100)
-          .then(blocks => {
-            if (blocks && blocks.data && blocks.data.payload && blocks.data.payload.records) {
-              vm.chart.data = blocks.data.payload.records.map(block => vm.createDataPoint(block, false));
-            }
-          });
+        const blocks = await this.$w3d.block.getBlocks()
+        vm.chart.data = blocks.map(block => vm.createDataPoint(block, false))
       },
     },
-    props: ['exchange', 'pair'],
 
     // Lifecycle
     mounted() {
@@ -77,20 +68,12 @@
       this.chart = result.chart;
 
       this.refreshData();
-
-      const vm = this;
-      addWatcherBlocks(this.$store, (block) => {
-        vm.chart.addData(vm.createDataPoint(block, true), 1);
-      })
     },
     beforeDestroy() {
       charts.dispose(this.chart);
-      deleteWatcher(this.watcher);
     },
   }
 </script>
-
-// -------------------------------------------------------------------------------------------------
 
 <style scoped lang="scss">
   #chartdiv {
@@ -98,5 +81,3 @@
     height: 500px;
   }
 </style>
-
-// -------------------------------------------------------------------------------------------------

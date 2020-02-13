@@ -7,7 +7,7 @@ import axios from 'axios'
 const API_KEY = process.env.API_KEY || '';
 const API_URL = process.env.API_URL || 'https://web3api.io';
 const API_TIMEOUT = process.env.API_TIMEOUT || 5000; // 5s
-const API_VERSION = process.env.API_VERSION || 'api/v1';
+const API_VERSION = process.env.API_VERSION || 'api/v2';
 
 // -------------------------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ export async function getMarketOrders({ exchange, pair, timeout }) {
 }
 
 export function getMarketOrdersUrl({ exchange, pair }) {
-  return _url(`market/orders/${pair}`, `exchange=${exchange}&x-api-key=${API_KEY}`)
+  return _url(`market/orders/${pair}`, `exchange=${exchange}`)
 }
 
 export async function getMarketOHLCV({ exchange, pair, timeout, timeInterval }) {

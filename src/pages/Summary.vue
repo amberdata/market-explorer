@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h1>Summary</h1>
+    <h1>Digital Assets Overview</h1>
     <Row style="padding: 20px 0">
       <Col span="24">
         <Card shadow>
-          <p>stuff here</p>
+          <Summary :exchanges="exchanges" />
         </Card>
       </Col>
     </Row>
@@ -12,8 +12,31 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import Summary from '../components/Summary.vue'
+
 export default {
-  name: 'Summary',
+  name: 'Summarys',
+
+  components: {
+    Summary,
+  },
+
+  computed: {
+    ...mapGetters(['exchanges', 'authenticated'])
+  },
+
+  methods: {
+    ...mapActions(['getExchanges'])
+  },
+
+  mounted() {
+    this.getExchanges()
+  },
+
+  watch: {
+    'authenticated': ['getExchanges']
+  }
 }
 </script>
 

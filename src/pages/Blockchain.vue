@@ -4,7 +4,7 @@
     <Row style="padding: 20px 0">
       <Col span="24">
         <Card shadow>
-          <p>stuff here</p>
+          <BlockchainBlocks :exchanges="exchanges"></BlockchainBlocks>
         </Card>
       </Col>
     </Row>
@@ -12,8 +12,31 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import BlockchainBlocks from '../components/BlockchainBlocks.vue'
+
 export default {
   name: 'Blockchain',
+
+  components: {
+    BlockchainBlocks,
+  },
+
+  computed: {
+    ...mapGetters(['exchanges', 'authenticated'])
+  },
+
+  methods: {
+    ...mapActions(['getExchanges'])
+  },
+
+  mounted() {
+    this.getExchanges()
+  },
+
+  watch: {
+    'authenticated': ['getExchanges']
+  }
 }
 </script>
 

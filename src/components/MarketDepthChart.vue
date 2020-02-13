@@ -1,5 +1,3 @@
-// -------------------------------------------------------------------------------------------------
-
 <template>
   <div id="market_depth">
     <div>
@@ -16,19 +14,16 @@
   </div>
 </template>
 
-// -------------------------------------------------------------------------------------------------
-
 <script>
   import Vue from 'vue'
-  import * as api from '../common/api'
-  import * as charts from '../common/charts'
-  import * as market from '../common/marketHandler'
+  import * as api from '../utils/api'
+  import * as charts from '../utils/charts'
+  import * as market from '../utils/marketHandler'
 
   export default {
-    // Properties
-    name: 'market_depth',
+    name: 'MarketDepthChart',
+    props: ['exchanges'],
 
-    // Reactive data
     computed: {
       exchangeNames() {
         return market.filterExchanges(this.exchanges, market.METRIC_ORDER_BOOK);
@@ -59,7 +54,7 @@
       refreshChart: function () {
         charts.refresh(this.chart);
       },
-      refreshData() {
+      async refreshData() {
         // Default values
         if (this.exchangeSelected === market.DEFAULT_EXCHANGE) this.exchangeSelected = this.exchangeNames[0];
         if (this.pairSelected === market.DEFAULT_PAIR) this.pairSelected = this.pairNames[0];
@@ -67,21 +62,13 @@
         // Refresh data
         if (!market.isPairReady(this.exchangeSelected, this.pairSelected)) return;
 
-        const result = charts.createMarketDepthChart(this.chartName, api.getMarketOrdersUrl({ exchange: this.exchangeSelected, pair: this.pairSelected }));
+        const orders = await this.$w3d.market.getOrders(this.pairSelected, [this.exchangeSelected])
+        const result = charts.createMarketDepthChart(this.chartName, orders);
         this.chart = result.chart;
       },
     },
-    props: ['exchanges'],
-    watch: {
-      exchanges: function(newExchanges, oldExchanges) {
-        const vm = this;
-        Vue.nextTick(() => vm.refreshData());
-      }
-    },
 
-    // Lifecycle
     created() {
-      // Default values
       this.exchangeSelected = market.DEFAULT_EXCHANGE;
       this.pairSelected = market.DEFAULT_PAIR;
     },
@@ -94,13 +81,9 @@
   }
 </script>
 
-// -------------------------------------------------------------------------------------------------
-
 <style scoped lang="scss">
   #chartdiv {
     width: 100%;
     height:600px;
   }
 </style>
-
-// -------------------------------------------------------------------------------------------------

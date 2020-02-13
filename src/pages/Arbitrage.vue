@@ -4,7 +4,7 @@
     <Row style="padding: 20px 0">
       <Col span="24">
         <Card shadow>
-          <p>stuff here</p>
+          <ArbitragePairs :exchanges="exchanges"></ArbitragePairs>
         </Card>
       </Col>
     </Row>
@@ -12,8 +12,31 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import ArbitragePairs from '../components/ArbitragePairs.vue'
+
 export default {
   name: 'Arbitrage',
+
+  components: {
+    ArbitragePairs,
+  },
+
+  computed: {
+    ...mapGetters(['exchanges', 'authenticated'])
+  },
+
+  methods: {
+    ...mapActions(['getExchanges'])
+  },
+
+  mounted() {
+    this.getExchanges()
+  },
+
+  watch: {
+    'authenticated': ['getExchanges']
+  }
 }
 </script>
 
