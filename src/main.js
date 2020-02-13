@@ -1,20 +1,22 @@
-// -------------------------------------------------------------------------------------------------
-
 import Vue from 'vue'
-
-import App from './components/Platform.vue'
+import Vuex from 'vuex'
+import VueRouter from 'vue-router'
 import store from './store'
-import websocket from './common/websockets'
+import router from './router'
+import App from './App'
+import ViewUI from 'view-design'
+import 'view-design/dist/styles/iview.css'
+import './theme/index.css'
 
-Vue.prototype.$websocket = websocket;
-websocket.setStore(store);
+Vue.config.productionTip = false
+Vue.prototype.$w3d = null
+Vue.use(ViewUI, {})
 
-// -------------------------------------------------------------------------------------------------
-
+/* eslint-disable no-new */
 new Vue({
-  store,
   el: '#app',
-  render: h => h(App),
-}).$mount('#app');
-
-// -------------------------------------------------------------------------------------------------
+  components: { App },
+  template: '<App/>',
+  store,
+  router,
+})

@@ -5,7 +5,7 @@ import * as am4charts from '@amcharts/amcharts4/charts';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected';
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
-import { dateTimeToFormat } from '../common/timeHandler'
+import { dateTimeToFormat } from './timeHandler'
 
 am4core.useTheme(am4themes_animated);
 
@@ -288,7 +288,8 @@ export function createHorizontalDumbbellPlotChart(htmlElement) {
   return { chart, series }
 }
 
-export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/public?command=returnOrderBook&currencyPair=BTC_ETH&depth=50') {
+// export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/public?command=returnOrderBook&currencyPair=BTC_ETH&depth=50') {
+export function createMarketDepthChart(htmlElement, rawOrders) {
   // ----------  Chart  ----------
 
   const chart = am4core.create(htmlElement, am4charts.XYChart);
@@ -296,60 +297,61 @@ export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/
 
   // ----------  Data sources  ----------
 
-  // Add data
-  chart.dataSource.url = url;
-  chart.dataSource.reloadFrequency = 30000;
-  chart.dataSource.adapter.add('parsedData', function(data) {
-    // Function to process (sort and calculate cumulative volume)
-    function processData(result, list, type, desc) {
-      // Convert to data points
-      for (let i = 0; i < list.length; i += 1) {
-        list[i] = {
-          value: Number(list[i][0]),
-          volume: Number(list[i][1]),
-        }
-      }
-
-      // Sort list just in case
-      list.sort(function(a, b) {
-             if (a.value > b.value) return  1;
-        else if (a.value < b.value) return -1;
-        else                        return  0;
-      });
-
-      // Calculate cumulative volume
-      if (desc) {
-        for (let i = list.length - 1; i >= 0; i -= 1) {
-          list[i].totalvolume = i < (list.length - 1)
-            ? list[i].volume + list[i+1].totalvolume
-            : list[i].volume;
-          result.unshift({
-            ['value']              : list[i].value,
-            [`${type}volume`]      : list[i].volume,
-            [`${type}totalvolume`] : list[i].totalvolume,
-          });
-        }
-      }
-      else {
-        for (let i = 0; i < list.length; i += 1) {
-          list[i].totalvolume = i > 0
-            ? list[i].volume + list[i-1].totalvolume
-            : list[i].volume;
-          result.push({
-            ['value']              : list[i].value,
-            [`${type}volume`]      : list[i].volume,
-            [`${type}totalvolume`] : list[i].totalvolume,
-          });
-        }
+  // // Add data
+  // chart.dataSource.url = url;
+  // chart.dataSource.reloadFrequency = 30000;
+  // chart.dataSource.adapter.add('parsedData', function(data) {
+  //
+  // });
+  // Function to process (sort and calculate cumulative volume)
+  function processData(result, list, type, desc) {
+    // Convert to data points
+    for (let i = 0; i < list.length; i += 1) {
+      list[i] = {
+        value: Number(list[i][0]),
+        volume: Number(list[i][1]),
       }
     }
 
-    // Process data
-    const result = [];
-    processData(result, data.bids || data.payload.data.bid, 'bids', true);  // plural = poloniex, singular = amberdata
-    processData(result, data.asks || data.payload.data.ask, 'asks', false); // plural = poloniex, singular = amberdata
-    return result;
-  });
+    // Sort list just in case
+    list.sort(function(a, b) {
+           if (a.value > b.value) return  1;
+      else if (a.value < b.value) return -1;
+      else                        return  0;
+    });
+
+    // Calculate cumulative volume
+    if (desc) {
+      for (let i = list.length - 1; i >= 0; i -= 1) {
+        list[i].totalvolume = i < (list.length - 1)
+          ? list[i].volume + list[i+1].totalvolume
+          : list[i].volume;
+        result.unshift({
+          ['value']              : list[i].value,
+          [`${type}volume`]      : list[i].volume,
+          [`${type}totalvolume`] : list[i].totalvolume,
+        });
+      }
+    }
+    else {
+      for (let i = 0; i < list.length; i += 1) {
+        list[i].totalvolume = i > 0
+          ? list[i].volume + list[i-1].totalvolume
+          : list[i].volume;
+        result.push({
+          ['value']              : list[i].value,
+          [`${type}volume`]      : list[i].volume,
+          [`${type}totalvolume`] : list[i].totalvolume,
+        });
+      }
+    }
+  }
+
+  // Process data
+  const result = [];
+  processData(result, rawOrders.data.bid, 'bids', true);
+  processData(result, rawOrders.data.ask, 'asks', false);
+  // return result;
 
   // Set up precision for numbers
   chart.numberFormatter.numberFormat = '#,###.####';
@@ -368,11 +370,13 @@ export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/
 
 
   // ----------  Series  ----------
+  chart.data = result;
 
   const series = chart.series.push(new am4charts.StepLineSeries());
   series.dataFields.categoryX = 'value';
   series.dataFields.valueY = 'bidstotalvolume';
   series.strokeWidth = 2;
+  series.data = result;
   series.stroke = am4core.color('#0f0');
   series.fill = series.stroke;
   series.fillOpacity = 0.1;
@@ -382,6 +386,7 @@ export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/
   series2.dataFields.categoryX = 'value';
   series2.dataFields.valueY = 'askstotalvolume';
   series2.strokeWidth = 2;
+  series2.data = result;
   series2.stroke = am4core.color('#f00');
   series2.fill = series2.stroke;
   series2.fillOpacity = 0.1;
@@ -391,6 +396,7 @@ export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/
   series3.dataFields.categoryX = 'value';
   series3.dataFields.valueY = 'bidsvolume';
   series3.strokeWidth = 0;
+  series3.data = result;
   series3.fill = am4core.color('#000');
   series3.fillOpacity = 0.2;
 
@@ -398,6 +404,7 @@ export function createMarketDepthChart(htmlElement, url = 'https://poloniex.com/
   series4.dataFields.categoryX = 'value';
   series4.dataFields.valueY = 'asksvolume';
   series4.strokeWidth = 0;
+  series4.data = result;
   series4.fill = am4core.color('#000');
   series4.fillOpacity = 0.2;
 

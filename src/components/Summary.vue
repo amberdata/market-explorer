@@ -71,114 +71,112 @@
 // -------------------------------------------------------------------------------------------------
 
 <script>
-  import * as api from '../common/api'
-  import { dateTimeToFormat } from '../common/timeHandler'
-  import SummaryTimeRanges from './SummaryTimeRanges.vue'
+import SummaryTimeRanges from './SummaryTimeRanges.vue'
 
-  export default {
-    // Properties
-    name: 'zummary',
+export default {
+  // Properties
+  name: 'zummary',
 
-    // Reactive data
-    components: { SummaryTimeRanges },
-    computed: {
-      exchangeNames() {
-        if (this.activetab === 1 && this.exchanges) return Object.keys(this.exchanges).sort();
-        return ['Loading...'];
-      },
-      pairNames() {
-        if (this.activetab === 2 && this.pairs) return Object.keys(this.pairs).sort();
-        return ['Loading...'];
-      },
-      metricNames() {
-        if (this.activetab === 3 && this.metrics) return Object.keys(this.metrics).sort();
-        return ['Loading...'];
-      },
+  // Reactive data
+  components: { SummaryTimeRanges },
+  computed: {
+    exchangeNames() {
+      if (this.activetab === 1 && this.exchanges) return Object.keys(this.exchanges).sort();
+      return ['Loading...'];
     },
-    data () {
-      return {
-        activetab: 1,
-        pairs: null,
-        metrics: null,
-      }
+    pairNames() {
+      if (this.activetab === 2 && this.pairs) return Object.keys(this.pairs).sort();
+      return ['Loading...'];
     },
-    methods: {
-      listExchangeMetrics(exchange) {
-        if (!this.exchanges || !this.exchanges[exchange]) return null;
-        const metrics = {};
-        Object.keys(this.exchanges[exchange]).forEach(p => {
-          Object.keys(this.exchanges[exchange][p]).forEach(m => {
-            metrics[m] = true;
-          });
+    metricNames() {
+      if (this.activetab === 3 && this.metrics) return Object.keys(this.metrics).sort();
+      return ['Loading...'];
+    },
+  },
+  data () {
+    return {
+      activetab: 1,
+      pairs: null,
+      metrics: null,
+    }
+  },
+  methods: {
+    listExchangeMetrics(exchange) {
+      if (!this.exchanges || !this.exchanges[exchange]) return null;
+      const metrics = {};
+      Object.keys(this.exchanges[exchange]).forEach(p => {
+        Object.keys(this.exchanges[exchange][p]).forEach(m => {
+          metrics[m] = true;
         });
-        return Object.keys(metrics);
-      },
-      listExchangePairs(exchange) {
-        return this.exchanges && this.exchanges[exchange] ? Object.keys(this.exchanges[exchange]) : null;
-      },
-      listPairExchanges(pair) {
-        return this.pairs && this.pairs[pair] ? this.pairs[pair] : null;
-      },
-      listPairMetrics(pair) {
-        if (!this.pairs || !this.pairs[pair]) return null;
-        const metrics = {};
-        this.pairs[pair].forEach(e => {
-          Object.keys(this.exchanges[e][pair]).forEach(m => {
-            metrics[m] = true;
-          });
+      });
+      return Object.keys(metrics);
+    },
+    listExchangePairs(exchange) {
+      return this.exchanges && this.exchanges[exchange] ? Object.keys(this.exchanges[exchange]) : null;
+    },
+    listPairExchanges(pair) {
+      return this.pairs && this.pairs[pair] ? this.pairs[pair] : null;
+    },
+    listPairMetrics(pair) {
+      if (!this.pairs || !this.pairs[pair]) return null;
+      const metrics = {};
+      this.pairs[pair].forEach(e => {
+        Object.keys(this.exchanges[e][pair]).forEach(m => {
+          metrics[m] = true;
         });
-        return Object.keys(metrics);
-      },
-      numExchangeMetrics(exchange) {
-        const listExchangeMetrics = this.listExchangeMetrics(exchange);
-        return listExchangeMetrics ? listExchangeMetrics.length : '...';
-      },
-      numExchangePairs(exchange) {
-        const listExchangePairs = this.listExchangePairs(exchange);
-        return listExchangePairs ? listExchangePairs.length : '...';
-      },
-      numPairExchanges(pair) {
-        const listPairExchanges = this.listPairExchanges(pair);
-        return listPairExchanges ? listPairExchanges.length : '...';
-      },
-      numPairMetrics(pair) {
-        const listPairMetrics = this.listPairMetrics(pair);
-        return listPairMetrics ? listPairMetrics.length : '...';
-      },
-      refreshData() {
-        this.pairs = {};
-        this.metrics = {};
+      });
+      return Object.keys(metrics);
+    },
+    numExchangeMetrics(exchange) {
+      const listExchangeMetrics = this.listExchangeMetrics(exchange);
+      return listExchangeMetrics ? listExchangeMetrics.length : '...';
+    },
+    numExchangePairs(exchange) {
+      const listExchangePairs = this.listExchangePairs(exchange);
+      return listExchangePairs ? listExchangePairs.length : '...';
+    },
+    numPairExchanges(pair) {
+      const listPairExchanges = this.listPairExchanges(pair);
+      return listPairExchanges ? listPairExchanges.length : '...';
+    },
+    numPairMetrics(pair) {
+      const listPairMetrics = this.listPairMetrics(pair);
+      return listPairMetrics ? listPairMetrics.length : '...';
+    },
+    refreshData() {
+      this.pairs = {};
+      this.metrics = {};
 
-        if (!this.exchanges) return;
+      if (!this.exchanges) return;
 
-        Object.keys(this.exchanges).forEach(e => {
-          const pairs = this.exchanges[e];
-          Object.keys(pairs).forEach(p => {
-            if (!this.pairs[p]) this.pairs[p] = [];
-            this.pairs[p].push(e);
+      Object.keys(this.exchanges).forEach(e => {
+        const pairs = this.exchanges[e];
+        Object.keys(pairs).forEach(p => {
+          if (!this.pairs[p]) this.pairs[p] = [];
+          this.pairs[p].push(e);
 
-            const metrics = pairs[p];
-            Object.keys(metrics).forEach(m => {
-              if (!this.metrics[m]) this.metrics[m] = [];
-              this.metrics[m].push({ exchange: e, pair: p });
-            })
+          const metrics = pairs[p];
+          Object.keys(metrics).forEach(m => {
+            if (!this.metrics[m]) this.metrics[m] = [];
+            this.metrics[m].push({ exchange: e, pair: p });
           })
-        });
-      },
+        })
+      });
     },
-    props: ['exchanges'],
-    watch: {
-      exchanges: function(newExchanges, oldExchanges) {
-        if (!newExchanges) return;
-        this.refreshData();
-      },
-    },
-
-    // Lifecycle
-    mounted() {
+  },
+  props: ['exchanges'],
+  watch: {
+    exchanges: function(newExchanges, oldExchanges) {
+      if (!newExchanges) return;
       this.refreshData();
     },
-  }
+  },
+
+  // Lifecycle
+  mounted() {
+    this.refreshData();
+  },
+}
 </script>
 
 // -------------------------------------------------------------------------------------------------
@@ -244,9 +242,9 @@
   /* Style the tab content */
   .tabcontent {
     padding: 30px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 3px 3px 6px #e1e1e1
+    // border: 1px solid #ccc;
+    // border-radius: 10px;
+    // box-shadow: 3px 3px 6px #e1e1e1
   }
 </style>
 

@@ -1,7 +1,5 @@
-// -------------------------------------------------------------------------------------------------
-
 <template>
-  <div id="blockchain_data_token_transfers">
+  <div id="token_transfers">
     <div>
       <select v-model="tokenSelected" v-on:change="refreshData($event)">
         <option v-for="token in tokens" v-bind:value="token">{{ token.name }} ({{ token.address }})</option>
@@ -15,38 +13,15 @@
   </div>
 </template>
 
-// -------------------------------------------------------------------------------------------------
-
 <script>
-  import * as charts from '../common/charts'
-  import { dateTimeToISODateTime } from '../common/timeHandler'
-
-  //  SELECT p.*, t.name, t.symbol, t.decimals
-  //  FROM (
-  //    SELECT COALESCE(ta."tokenAddress", pt."tokenAddress") AS "tokenAddress", COALESCE(ta.date, pt.date) AS date, ta.total AS "totalConfirmed", pt.total AS "totalPending"
-  //    FROM (
-  //      SELECT   "to" AS "tokenAddress", DATE_TRUNC('minute', timestamp) AS date, COUNT(*) AS total, false AS "isPending"
-  //      FROM     transaction_all
-  //      WHERE    timestamp > NOW() - INTERVAL '1 hour' AND input LIKE '0xa9059cbb%' -- AND "to" = '0x048fe49be32adfc9ed68c37d32b5ec9df17b3603'
-  //      GROUP BY "tokenAddress", date
-  //    ) ta
-  //    FULL JOIN (
-  //      SELECT   "to" AS "tokenAddress", DATE_TRUNC('minute', "createdAt") AS date, COUNT(*) AS total, true AS "isPending"
-  //      FROM     pending_transaction
-  //      WHERE    "createdAt" > NOW() - INTERVAL '1 hour' AND input LIKE '0xa9059cbb%' -- AND "to" = '0x048fe49be32adfc9ed68c37d32b5ec9df17b3603'
-  //      GROUP BY "tokenAddress", date
-  //    ) pt
-  //    ON ta."tokenAddress" = pt."tokenAddress" AND ta.date = pt.date
-  //  ) p
-  //  LEFT JOIN token t ON t.address = p."tokenAddress"
-  //  ORDER BY "tokenAddress", date
+  import * as charts from '../utils/charts'
+  import { dateTimeToISODateTime } from '../utils/timeHandler'
   import tokenTransfers from '../assets/token_transfers.json'
 
   export default {
-    // Properties
-    name: 'blockchain_data.token_transfers',
+    name: 'TokenTransfers',
+    props: ['exchange', 'pair'],
 
-    // Reactive data
     data () {
       return {
         // Blockchain data
@@ -101,7 +76,6 @@
           }))
       },
     },
-    props: ['exchange', 'pair'],
 
     // Lifecycle
     mounted() {
@@ -117,13 +91,9 @@
   }
 </script>
 
-// -------------------------------------------------------------------------------------------------
-
 <style scoped lang="scss">
   #chartdiv {
     width: 100%;
     height: 500px;
   }
 </style>
-
-// -------------------------------------------------------------------------------------------------
