@@ -127,7 +127,7 @@
 
         // Refresh data
         if (!market.isPairReady(this.pairA.exchangeSelected, this.pairA.pairSelected)) return;
-        if (!this.chart) return;
+        // if (!this.chart) return;
 
         const format = 'yyyy-MM-dd hh:mm:ss';
         const pairAMetric = this.exchanges[this.pairA.exchangeSelected][this.pairA.pairSelected][market.METRIC_OHLC]
@@ -157,15 +157,33 @@
 
         const ohlcvResA = await this.$w3d.market.getOhlcv(this.pairA.pairSelected, optionsA)
         const ohlcvDataA = optionsA.startDate || optionsA.endDate ? ohlcvResA.data[optionsA.exchange] : ohlcvResA[optionsA.exchange]
-        const ohlcvResB = await this.$w3d.market.getOhlcv(this.pairB.pairSelected, optionsA)
-        const ohlcvDataB = optionsB.startDate || optionsB.endDate ? ohlcvResB.data[optionsA.exchange] : ohlcvResB[optionsA.exchange]
+        const ohlcvResB = await this.$w3d.market.getOhlcv(this.pairB.pairSelected, optionsB)
+        const ohlcvDataB = optionsB.startDate || optionsB.endDate ? ohlcvResB.data[optionsB.exchange] : ohlcvResB[optionsA.exchange]
 
         if (ohlcvDataA) {
           this.chart.data = ohlcvDataA.map(x => ({ date: x[0], open: x[1], high: x[2], low: x[3], close: x[4], volume: x[5] }))
+          console.log('this.chart.data', this.chart.data)
         }
-        if (ohlcvDataB) {
-          this.chart.data = ohlcvDataB.map(x => ({ date: x[0], open: x[1], high: x[2], low: x[3], close: x[4], volume: x[5] }))
-        }
+        // if (ohlcvDataB) {
+        //   this.chart.data = ohlcvDataB.map(x => ({ date: x[0], open: x[1], high: x[2], low: x[3], close: x[4], volume: x[5] }))
+        // }
+
+        const combinedData = []
+        if (!ohlcvDataA || !ohlcvDataB) return
+
+        // combine both data sets into timestamp matched data array
+        ohlcvDataA.forEach(oA => {
+          ohlcvDataB.forEach(oB => {
+            // if (oA[0] === oB[0]) combinedData.push({ date: oA[0], a: oA[4], b: oB[4] })
+            if (oA[0] === oB[0]) {
+              // console.log('oA[0] === oB[0]', oA[0] === oB[0], oA[0], oB[0])
+              combinedData.push({ date: oA[0], dateB: oB[0], pairA: oA[4], labelA: 'A', pairB: oB[4], labelB: 'B' })
+            }
+          })
+        })
+        console.log('combinedData', combinedData)
+
+        this.chart.data = combinedData
       },
     },
     props: ['exchanges'],
@@ -186,9 +204,11 @@
     },
     mounted() {
       // Chart
-      const result = charts.createProfessionalCandlesticksChart(this.chartName);
+      // const result = charts.createProfessionalCandlesticksChart(this.chartName);
+      // this.chart = result.chart;
+      // this.chart.data = [];
+      const result = charts.createRangeAreaChart(this.chartName, { pairA: 'pairA', pairB: 'pairB', labelA: 'A', labelB: 'B' });
       this.chart = result.chart;
-      this.chart.data = [];
 
       // Data
       this.refreshData();

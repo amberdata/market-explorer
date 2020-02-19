@@ -677,7 +677,7 @@ export function createProfessionalCandlesticksChart(htmlElement) {
   return { chart, series, series2 };
 }
 
-export function createRangeAreaChart(htmlElement) {
+export function createRangeAreaChart(htmlElement, options = {}) {
   // ----------  Chart  ----------
 
   const chart = am4core.create(htmlElement, am4charts.XYChart);
@@ -700,13 +700,15 @@ export function createRangeAreaChart(htmlElement) {
 
   const series = chart.series.push(new am4charts.LineSeries());
   series.dataFields.dateX = 'date';
-  series.dataFields.openValueY = 'open';
-  series.dataFields.valueY = 'close';
-  series.dataFields.valueY = 'close';
-  series.tooltipText = 'pending: {openValueY.value}\nconfirmed: {valueY.value}';
+  series.dataFields.openValueY = options.pairA || 'open';
+  series.dataFields.valueY = options.pairB || 'close';
+  series.dataFields.dateA = 'date';
+  series.dataFields.dateB = 'dateB';
+  // series.tooltipText = 'pending: {openValueY.value}\nconfirmed: {valueY.value}';
+  series.tooltipText = `${options.labelA || 'pending'}: {openValueY.value}\n${options.labelB || 'confirmed'}: {valueY.value}\nDate: {dateA}`;
   series.sequencedInterpolation = true;
   series.fillOpacity = 0.3;
-  series.defaultState.transitionDuration = 1000;
+  series.defaultState.transitionDuration = 100;
   series.tensionX = 0.8;
 
 
@@ -714,9 +716,9 @@ export function createRangeAreaChart(htmlElement) {
 
   const series2 = chart.series.push(new am4charts.LineSeries());
   series2.dataFields.dateX = 'date';
-  series2.dataFields.valueY = 'open';
+  series2.dataFields.valueY = options.pairA || 'open';
   series2.sequencedInterpolation = true;
-  series2.defaultState.transitionDuration = 1500;
+  series2.defaultState.transitionDuration = 100;
   series2.stroke = chart.colors.getIndex(6);
   series2.tensionX = 0.8;
 
