@@ -42,6 +42,10 @@
               <Icon type="ios-albums" />
               <span>Blockchain</span>
             </MenuItem>
+            <MenuItem name="8-1" :to="{ name: 'PriceComparison' }">
+              <Icon type="ios-albums" />
+              <span>Asset Comparison</span>
+            </MenuItem>
             <MenuItem name="10-1" :to="{ name: 'Settings' }">
               <Icon type="ios-construct" />
               <span>Settings</span>
@@ -113,6 +117,9 @@ export default {
         break;
       case 'Summary':
         this.activePage = '7-1'
+        break;
+      case 'PriceComparison':
+        this.activePage = '8-1'
         break;
       case 'Settings':
         this.activePage = '10-1'
