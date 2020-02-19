@@ -111,7 +111,7 @@
       updateExchange(v) {
         const type = `pair${v}`
         const set = `pairNames${v}`
-        const initialPair = this.pairNames.includes(this[type].pairSelected) ? this[type].pairSelected : this[set][0]
+        const initialPair = this[set].includes(this[type].pairSelected) ? this[type].pairSelected : this[set][0]
         this[type].pairSelected = initialPair
         this.refreshData()
       },
@@ -160,15 +160,16 @@
         const ohlcvResB = await this.$w3d.market.getOhlcv(this.pairB.pairSelected, optionsB)
         const ohlcvDataB = optionsB.startDate || optionsB.endDate ? ohlcvResB.data[optionsB.exchange] : ohlcvResB[optionsA.exchange]
 
-        if (ohlcvDataA) {
-          this.chart.data = ohlcvDataA.map(x => ({ date: x[0], open: x[1], high: x[2], low: x[3], close: x[4], volume: x[5] }))
-          console.log('this.chart.data', this.chart.data)
-        }
+        // if (ohlcvDataA) {
+        //   this.chart.data = ohlcvDataA.map(x => ({ date: x[0], open: x[1], high: x[2], low: x[3], close: x[4], volume: x[5] }))
+        //   console.log('this.chart.data', this.chart.data)
+        // }
         // if (ohlcvDataB) {
         //   this.chart.data = ohlcvDataB.map(x => ({ date: x[0], open: x[1], high: x[2], low: x[3], close: x[4], volume: x[5] }))
         // }
 
         const combinedData = []
+        console.log('!ohlcvDataA || !ohlcvDataB', !ohlcvDataA, !ohlcvDataB)
         if (!ohlcvDataA || !ohlcvDataB) return
 
         // combine both data sets into timestamp matched data array
