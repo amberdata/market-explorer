@@ -13,7 +13,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ComparisonChart from '../components/OhlcvChart.vue'
+import ComparisonChart from '../components/ComparisonChart.vue'
 
 export default {
   name: 'PriceComparison',
