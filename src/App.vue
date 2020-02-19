@@ -43,7 +43,7 @@
               <span>Blockchain</span>
             </MenuItem>
             <MenuItem name="8-1" :to="{ name: 'PriceComparison' }">
-              <Icon type="ios-albums" />
+              <Icon type="md-git-compare" />
               <span>Asset Comparison</span>
             </MenuItem>
             <MenuItem name="10-1" :to="{ name: 'Settings' }">
