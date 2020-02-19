@@ -6,6 +6,7 @@ import Arbitrage from '@/pages/Arbitrage'
 import Blockchain from '@/pages/Blockchain'
 import MarketDepth from '@/pages/MarketDepth'
 import OHLCV from '@/pages/OHLCV'
+import PriceComparison from '@/pages/PriceComparison'
 import Settings from '@/pages/Settings'
 import Summary from '@/pages/Summary'
 
@@ -43,6 +44,11 @@ export default new Router({
       path: '/ohlcv',
       name: 'OHLCV',
       component: OHLCV
+    },
+    {
+      path: '/comparison',
+      name: 'PriceComparison',
+      component: PriceComparison
     },
     {
       path: '/settings',
