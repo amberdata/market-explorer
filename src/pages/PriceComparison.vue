@@ -3,8 +3,11 @@
     <h1>Asset Comparison</h1>
     <Row style="padding: 20px 0">
       <Col span="24">
-        <Card shadow>
+        <Card v-if="exchanges" shadow>
           <ComparisonChart :exchanges="exchanges"></ComparisonChart>
+        </Card>
+        <Card v-else shadow>
+          <h3>Loading...</h3>
         </Card>
       </Col>
     </Row>

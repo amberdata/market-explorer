@@ -706,10 +706,12 @@ export function createRangeAreaChart(htmlElement, options = {}) {
   series.dataFields.dateB = 'dateB';
   // series.tooltipText = 'pending: {openValueY.value}\nconfirmed: {valueY.value}';
   series.tooltipText = `${options.labelA || 'pending'}: {openValueY.value}\n${options.labelB || 'confirmed'}: {valueY.value}\nDate: {dateA}`;
+  // series.stroke = chart.colors.getIndex(2);
+  series.stroke = '#000';
   series.sequencedInterpolation = true;
   series.fillOpacity = 0.3;
   series.defaultState.transitionDuration = 100;
-  series.tensionX = 0.8;
+  series.tensionX = 1;
 
 
   // ----------  Series 2  ----------
@@ -719,8 +721,8 @@ export function createRangeAreaChart(htmlElement, options = {}) {
   series2.dataFields.valueY = options.pairA || 'open';
   series2.sequencedInterpolation = true;
   series2.defaultState.transitionDuration = 100;
-  series2.stroke = chart.colors.getIndex(6);
-  series2.tensionX = 0.8;
+  series2.stroke = chart.colors.getIndex(4);
+  series2.tensionX = 1;
 
 
   // ----------  Cursor & Scrollbar  ----------
