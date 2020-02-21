@@ -9,6 +9,7 @@ import OHLCV from '@/pages/OHLCV'
 import PriceComparison from '@/pages/PriceComparison'
 import Settings from '@/pages/Settings'
 import Summary from '@/pages/Summary'
+import TransactionInspector from '@/pages/TransactionInspector'
 
 Vue.use(Router)
 
@@ -59,6 +60,11 @@ export default new Router({
       path: '/summary',
       name: 'Summary',
       component: Summary
+    },
+    {
+      path: '/txn-inspector',
+      name: 'TransactionInspector',
+      component: TransactionInspector
     },
   ]
 })
