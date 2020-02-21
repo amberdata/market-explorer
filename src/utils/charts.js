@@ -706,10 +706,12 @@ export function createRangeAreaChart(htmlElement, options = {}) {
   series.dataFields.dateB = 'dateB';
   // series.tooltipText = 'pending: {openValueY.value}\nconfirmed: {valueY.value}';
   series.tooltipText = `${options.labelA || 'pending'}: {openValueY.value}\n${options.labelB || 'confirmed'}: {valueY.value}\nDate: {dateA}`;
+  // series.stroke = chart.colors.getIndex(2);
+  series.stroke = '#000';
   series.sequencedInterpolation = true;
   series.fillOpacity = 0.3;
   series.defaultState.transitionDuration = 100;
-  series.tensionX = 0.8;
+  series.tensionX = 1;
 
 
   // ----------  Series 2  ----------
@@ -719,8 +721,8 @@ export function createRangeAreaChart(htmlElement, options = {}) {
   series2.dataFields.valueY = options.pairA || 'open';
   series2.sequencedInterpolation = true;
   series2.defaultState.transitionDuration = 100;
-  series2.stroke = chart.colors.getIndex(6);
-  series2.tensionX = 0.8;
+  series2.stroke = chart.colors.getIndex(4);
+  series2.tensionX = 1;
 
 
   // ----------  Cursor & Scrollbar  ----------
@@ -731,6 +733,39 @@ export function createRangeAreaChart(htmlElement, options = {}) {
   chart.scrollbarX = new am4core.Scrollbar();
 
   return { chart, series, series2 }
+}
+
+export function createGanttChart(htmlElement, options = {}) {
+  const chart = am4core.create(htmlElement, am4charts.XYChart);
+  chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+  chart.paddingRight = 30;
+  chart.dateFormatter.dateFormat = "yyyy-MM-dd";
+  chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
+
+  var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+  categoryAxis.dataFields.category = "category";
+  categoryAxis.renderer.grid.template.location = 0;
+  categoryAxis.renderer.inversed = true;
+
+  var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+  dateAxis.renderer.minGridDistance = 70;
+  // dateAxis.baseInterval = { count: 1, timeUnit: "day" };
+  dateAxis.baseInterval = { count: 1 };
+  dateAxis.renderer.tooltipLocation = 0;
+
+  var series1 = chart.series.push(new am4charts.ColumnSeries());
+  series1.columns.template.height = am4core.percent(70);
+  series1.columns.template.tooltipText = "{task}: [bold]{openDateX}[/] - [bold]{dateX}[/]";
+  series1.dataFields.openDateX = "start";
+  series1.dataFields.dateX = "end";
+  series1.dataFields.categoryY = "category";
+  series1.columns.template.propertyFields.fill = "color"; // get color from data
+  series1.columns.template.propertyFields.stroke = "color";
+  series1.columns.template.strokeOpacity = 1;
+
+  chart.scrollbarX = new am4core.Scrollbar();
+
+  return { chart, series1 }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -745,3 +780,85 @@ export function refresh(chart) {
 }
 
 // -------------------------------------------------------------------------------------------------
+
+export function getColorForString(str) {
+  const colorSet = new am4core.ColorSet()
+  switch (str.toLowerCase()) {
+    case 'call':
+      return '#3eb56e' // colorSet.getIndex(0)
+      break;
+    case 'delegatecall':
+      return '#67a4bf' // colorSet.getIndex(1)
+      break;
+    case 'staticcall':
+      return '#35393c' // colorSet.getIndex(2)
+      break;
+    case 'selfdestruct':
+      return '#c74444' // colorSet.getIndex(3)
+      break;
+    default:
+      return '#df8b46' // colorSet.getIndex(4)
+  }
+}
+
+export function createSankeyDiagramChart(htmlElement, options = {}) {
+  const chart = am4core.create(htmlElement, am4charts.SankeyDiagram);
+  chart.hiddenState.properties.opacity = 0;
+
+  // chart.dataFields.fromName = "from";
+  // chart.dataFields.toName = "to";
+  // chart.dataFields.value = "value";
+  //
+  // chart.links.template.propertyFields.id = "id";
+  // chart.links.template.colorMode = "solid";
+  // chart.links.template.fill = new am4core.InterfaceColorSet().getFor("alternativeBackground");
+  // chart.links.template.fillOpacity = 0.1;
+  // chart.links.template.tooltipText = "";
+
+
+  let hoverState = chart.links.template.states.create("hover");
+  hoverState.properties.fillOpacity = 0.6;
+
+  chart.dataFields.fromName = "from";
+  chart.dataFields.toName = "to";
+  chart.dataFields.value = "value";
+
+  // for right-most label to fit
+  chart.paddingRight = 30;
+
+  // make nodes draggable
+  var nodeTemplate = chart.nodes.template;
+  nodeTemplate.inert = true;
+  nodeTemplate.readerTitle = "Drag me!";
+  nodeTemplate.showSystemTooltip = true;
+  nodeTemplate.width = 20;
+
+  // make nodes draggable
+  var nodeTemplate = chart.nodes.template;
+  nodeTemplate.readerTitle = "Click to show/hide or drag to rearrange";
+  nodeTemplate.showSystemTooltip = true;
+  nodeTemplate.cursorOverStyle = am4core.MouseCursorStyle.pointer
+
+  // // highlight all links with the same id beginning
+  // chart.links.template.events.on("over", function(event){
+  //   let link = event.target;
+  //   let id = link.id.split("-")[0];
+  //
+  //   chart.links.each(function(link){
+  //     if(link.id.indexOf(id) != -1){
+  //       link.isHover = true;
+  //     }
+  //   })
+  // })
+  //
+  // chart.links.template.events.on("out", function(event){
+  //   chart.links.each(function(link){
+  //     link.isHover = false;
+  //   })
+  // })
+
+  // for right-most label to fit
+  chart.paddingRight = 30;
+
+  return { chart }
+}

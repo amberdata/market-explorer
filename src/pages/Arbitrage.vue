@@ -3,8 +3,8 @@
     <h1>Arbitrage</h1>
     <Row style="padding: 20px 0">
       <Col span="24">
-        <Card shadow>
-          <ArbitragePairs :exchanges="exchanges"></ArbitragePairs>
+        <Card v-if="exchanges" shadow>
+          <ArbitrageList :exchanges="exchanges"></ArbitrageList>
         </Card>
       </Col>
     </Row>
@@ -13,13 +13,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ArbitragePairs from '../components/ArbitragePairs.vue'
+import ArbitrageList from '../components/ArbitrageList.vue'
 
 export default {
   name: 'Arbitrage',
 
   components: {
-    ArbitragePairs,
+    ArbitrageList,
   },
 
   computed: {

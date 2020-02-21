@@ -3,8 +3,11 @@
     <h1>OHLCV</h1>
     <Row style="padding: 20px 0">
       <Col span="24">
-        <Card shadow>
+        <!-- <Card shadow>
           <OhlcvChart :exchanges="exchanges"></OhlcvChart>
+        </Card> -->
+        <Card v-if="exchanges" shadow>
+          <RealtimeOhlcvChart :exchanges="exchanges"></RealtimeOhlcvChart>
         </Card>
       </Col>
     </Row>
@@ -14,12 +17,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import OhlcvChart from '../components/OhlcvChart.vue'
+import RealtimeOhlcvChart from '../components/RealtimeOhlcvChart.vue'
 
 export default {
   name: 'OHLCV',
 
   components: {
     OhlcvChart,
+    RealtimeOhlcvChart,
   },
 
   computed: {

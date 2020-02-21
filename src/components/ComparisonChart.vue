@@ -16,7 +16,7 @@
     <div class="form-header">
       <div class="form-lines">
         <div class="form-line">
-          <small>Asset 1:</small>
+          <small>Asset A:</small>
           <Select v-model="pairA.exchangeSelected" @on-change="updateExchange('A')" style="width:160px">
             <Option v-for="exchange in exchangeNames" :value="exchange" :key="exchange">{{ exchange }}</Option>
           </Select>
@@ -25,7 +25,7 @@
           </Select>
         </div>
         <div class="form-line">
-          <small>Asset 2:</small>
+          <small>Asset B:</small>
           <Select v-model="pairB.exchangeSelected" @on-change="updateExchange('B')" style="width:160px">
             <Option v-for="exchange in exchangeNames" :value="exchange" :key="exchange">{{ exchange }}</Option>
           </Select>
@@ -118,7 +118,7 @@
 
         // Refresh data
         if (!market.isPairReady(this.pairA.exchangeSelected, this.pairA.pairSelected)) return;
-        // if (!this.chart) return;
+        if (!this.chart) return;
 
         const format = 'yyyy-MM-dd hh:mm:ss';
         const pairAMetric = this.exchanges[this.pairA.exchangeSelected][this.pairA.pairSelected][market.METRIC_OHLC]
@@ -152,12 +152,13 @@
         const ohlcvDataB = optionsB.startDate || optionsB.endDate ? ohlcvResB.data[optionsB.exchange] : ohlcvResB[optionsA.exchange]
         const combinedData = []
         if (!ohlcvDataA || !ohlcvDataB) return
+        console.log('this.pairA.pairSelected', this.pairA.pairSelected)
 
         // combine both data sets into timestamp matched data array
         ohlcvDataA.forEach(oA => {
           ohlcvDataB.forEach(oB => {
             if (oA[0] === oB[0]) {
-              combinedData.push({ date: oA[0], dateB: oB[0], pairA: oA[4], labelA: 'A', pairB: oB[4], labelB: 'B' })
+              combinedData.push({ date: oA[0], dateB: oB[0], pairA: oA[4], labelA: this.pairA.pairSelected || 'A', pairB: oB[4], labelB: this.pairB.pairSelected || 'B' })
             }
           })
         })
@@ -178,8 +179,10 @@
       // Default values
       this.pairA.exchangeSelected = 'gdax' || market.DEFAULT_EXCHANGE;
       this.pairA.pairSelected = 'btc_usd' || market.DEFAULT_PAIR;
-      this.pairB.exchangeSelected = 'binance' || market.DEFAULT_EXCHANGE;
-      this.pairB.pairSelected = 'btc_usdt' || market.DEFAULT_PAIR;
+      // this.pairB.exchangeSelected = 'binance' || market.DEFAULT_EXCHANGE;
+      // this.pairB.pairSelected = 'btc_usdt' || market.DEFAULT_PAIR;
+      this.pairB.exchangeSelected = 'bitfinex' || market.DEFAULT_EXCHANGE;
+      this.pairB.pairSelected = 'wbt_usd' || market.DEFAULT_PAIR;
     },
     mounted() {
       // Chart
