@@ -17,7 +17,7 @@ const columns = [
       key: 'name',
       tree: true,
       // fixed: 'left',
-      // width: 100
+      width: 140
   },
   // {
   //     title: 'Symbol',
@@ -52,6 +52,10 @@ const columns = [
       key: 'spread',
   },
   {
+      title: 'Arb %',
+      key: 'arbPercent',
+  },
+  {
       title: 'Last',
       key: 'last',
   },
@@ -68,6 +72,7 @@ const columns = [
 export default {
   name: 'ArbitrageList',
   props: ['exchanges'],
+
   data () {
     return {
       loading: true,
@@ -75,9 +80,21 @@ export default {
       columns,
     }
   },
+
   methods: {
     getSpread(ticker) {
       return Number(ticker.ask - ticker.bid).toFixed(4)
+    },
+    calcArbitragePercent(ticker, asset) {
+      let minPrice = asset.currentPrice;
+      let maxPrice = asset.currentPrice;
+
+      if (ticker.last && asset.currentPrice) {
+        if (ticker.last > maxPrice) maxPrice = ticker.last;
+        if (ticker.last < minPrice) minPrice = ticker.last;
+      }
+
+      return ((maxPrice - minPrice) / maxPrice).toFixed(4)
     },
     associatePairData(arr) {
       const ex = this.exchanges
@@ -132,7 +149,7 @@ export default {
 
             // l.children.push(ticker[p.exchange])
             Object.keys(tickers).forEach((t, tdx) => {
-              l.children.push({
+              const tmpTick = {
                 ...tickers[t],
                 id: `${l.rank}${idx}${pdx}${tdx}`,
                 name: l.name,
@@ -140,7 +157,17 @@ export default {
                 pair: p,
                 exchange: t,
                 spread: this.getSpread(tickers[t]),
-              })
+                arbPercent: this.calcArbitragePercent(tickers[t], l)
+              }
+
+              if (tmpTick.arbPercent > 0.5) {
+                tmpTick.cellClassName = { name: 'cell-bk-warn' }
+              }
+              if (tmpTick.arbPercent > 2) {
+                tmpTick.cellClassName = { name: 'cell-bk-err' }
+              }
+
+              l.children.push(tmpTick)
             })
           } catch(e) {
             console.log('e', e)
@@ -155,6 +182,7 @@ export default {
       const updatedItems = await Promise.all(all)
       console.log('updatedItems', updatedItems)
       this.allItems = updatedItems
+      this.allItems[0]._showChildren = true
       console.log('this.allItems', this.allItems)
 
       // this.allItems = []
@@ -175,13 +203,13 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-  .arbitrage {
-    color: dodgerblue;
-  }
-  .highSpread {
-    color: red;
-  }
-  .noClass {
-  }
+<style lang="scss">
+.ivu-table td.cell-bk-warn {
+  background: orange;
+  color: white;
+}
+.ivu-table td.cell-bk-err {
+  background: red;
+  color: white;
+}
 </style>
